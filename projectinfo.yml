@@ -1,0 +1,17 @@
+info:
+  project_name: "unum"
+  project_start_date: 06/06/2018
+  name: "unum "
+  authors: "Wyatt Roersma, Devin Smith"
+  authors_email: "wyatt@aucr.io"
+  description: "A unified file unum AUCR."
+  classifiers:
+    - 'Development Status :: 4 - Beta'
+    - 'Intended Audience :: Developers'
+    - 'Programming Language :: Python :: 3.6'
+
+version:
+  major: 0
+  minor: 0
+  revision: 1
+  release: 7

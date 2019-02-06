@@ -1,0 +1,8 @@
+main:
+    user: [
+        link: [
+              page: 'unum.unum_plugin_route',
+              icon: 'fingerprint',
+              title: 'Unum'
+            ]
+      ]
