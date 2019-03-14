@@ -27,7 +27,7 @@ def before_request():
 @unum.route('/search')
 @login_required
 def unum_search():
-    """AUCR search plugin flask blueprint."""
+    """UNUM search plugin flask blueprint."""
     if not g.unum_search_form.validate():
         return redirect(url_for('unum.unum_plugin_route'))
     page = request.args.get('page', 1, type=int) or 1

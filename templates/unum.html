@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <main class="mdl-layout__content">
+        <div class="page-content">
+                <div class="mdl-grid">
+            <span class="mdl-layout-title">Unum</span>
+            <div class="mdl-layout-spacer"></div>
+            <form class="form" method="post" role="form">
+                    {{ form.hidden_tag() }}
+                    <!--</div>-->
+            {% with form_object="uploadbutton", button_text="",button_icon="add", button_value="createnewcasebutton" %}
+                {% include "subtemplates/_plain_button.html" %}
+            {% endwith %}
+            </form>
+        </div>
+        <div class="mdl-layout-spacer"></div>
+            {% with form_object="table",
+                checkbox_enabled="True",
+                table_list=["Delete"],
+                table_header=["Upload File ID", "Description", "MD5", "File_Name", "Classification"],
+                url_for_value='unum.edit_upload_file_route'  %}
+            {% include "subtemplates/_table_object.html" %}
+        {% endwith %}
+        {% with form_object="prevnextnav", prev_url=prev_url, prev_text="Back", next_url=next_url, next_text="Next" %}
+            {% include "subtemplates/_prev_next_nav.html" %}
+        {% endwith %}
+        <div class="mdl-layout-spacer"></div>
+        </div>
+    </main>
+{% endblock %}

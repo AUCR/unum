@@ -1,0 +1,22 @@
+<style>
+    .demo-list-action {
+      width: 100%;
+    }
+    .mdl-textfield{
+        width:100%;
+    }
+</style>
+<table class="table table-hover">
+    <tr>
+        <td>
+            {{ _("File ID") }} : <a href="{{  url_for('unum.edit_upload_file_route', id=post.id) }}">{{ post.id }}</a>
+        <br>
+           {{ _("MD5") }}:
+                <a href="{{  url_for('unum.unum_file_download', md5_hash=post.md5_hash) }}">{{ post.md5_hash }}</a>
+        <br>
+            {{ _("Description") }} : {{ post.description }}
+        <br>
+            {{ _("File Name") }} : {{ post.file_name }}
+        </td>
+    </tr>
+</table>

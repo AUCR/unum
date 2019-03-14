@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <style>
+        .demo-list-action {
+          width: 600px;
+        }
+        .mdl-textfield{
+          width:1000px;
+        }
+    </style>
+    <main class="mdl-layout__content">
+        <div class="mdl-layout-spacer"></div>
+        <div class = "mdl-tabs mdl-js-tabs">
+            <div class = "mdl-tabs__tab-bar">
+                 <a href="#file-submission" class="mdl-tabs__tab is-active">File</a>
+                 <a href="#url-submission" class="mdl-tabs__tab">URL</a>
+                 <a href="#hash-submission" class="mdl-tabs__tab">Hash</a>
+            </div>
+            <div class="mdl-tabs__panel is-active" id="file-submission">
+                <div class="mdl-grid">
+                    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">{{ title }}</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">{{ supporting_text }}
+                        </div>
+                        <div class="mdl-card__actions mdl-card--border ">
+                            <form class="form" method="post" role="form" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+                                {% with form_object=description, form_object_name="description", form_object_rows=1, form_object_label="Description", form_object_value=form.data.description  if form.data.description != None else ""%}
+                                    {% include "subtemplates/_form_object_textfield.html" %}
+                                {% endwith %}
+                                <div class="mdl-layout-spacer"></div>
+                                {% include "upload_file.html" %}
+                                <div class="mdl-layout-spacer"></div>
+                                {% with iterable_thing=classification, dropdown_topic="classification", dropdown_label="Classification", form_object_value=form.data.classification %}
+                                    {% include "subtemplates/_dropdown_list.html" %}
+                                {% endwith %}
+                                {% with iterable_thing=groups, dropdown_topic="group_access", dropdown_label="Group Access", form_object_value=form.data.group_access  %}
+                                    {% include "subtemplates/_dropdown_object.html" %}
+                                {% endwith %}
+                                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                                        value=data-val.value>
+                                    Create
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="mdl-tabs__panel" id="url-submission">
+                <div class="mdl-grid">
+                    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">{{ title }}</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">{{ supporting_text }}
+                        </div>
+                        <div class="mdl-card__actions mdl-card--border ">
+                            <form class="form" method="post" role="form" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+                                {% with form_object=description, form_object_name="description", form_object_rows=1, form_object_label="Description", form_object_value=form.data.description  if form.data.description != None else ""%}
+                                    {% include "subtemplates/_form_object_textfield.html" %}
+                                {% endwith %}
+                                {% with form_object=submit_url, form_object_name="submit_url", form_object_rows=1, form_object_label="URL", form_object_value=form.data.submit_url  if form.data.submit_url != None else ""%}
+                                    {% include "subtemplates/_form_object_textfield.html" %}
+                                {% endwith %}
+                                <div class="mdl-layout-spacer"></div>
+                                {% with iterable_thing=classification, dropdown_topic="classification", dropdown_label="Classification", form_object_value=form.data.classification %}
+                                    {% include "subtemplates/_dropdown_list.html" %}
+                                {% endwith %}
+                                {% with iterable_thing=groups, dropdown_topic="group_access", dropdown_label="Group Access",form_object_value=form.data.group_access %}
+                                    {% include "subtemplates/_dropdown_object.html" %}
+                                {% endwith %}
+                                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                                        value=data-val.value>
+                                    Create
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="mdl-tabs__panel" id="hash-submission">
+                <div class="mdl-grid">
+                    <section class="section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+                        <div class="mdl-card__title">
+                            <h2 class="mdl-card__title-text">{{ title }}</h2>
+                        </div>
+                        <div class="mdl-card__supporting-text">{{ supporting_text }}
+                        </div>
+                        <div class="mdl-card__actions mdl-card--border ">
+                            <form class="form" method="post" role="form" enctype="multipart/form-data">
+                                {{ form.hidden_tag() }}
+                                {% with form_object=description, form_object_name="description", form_object_rows=1, form_object_label="Description", form_object_value=form.data.description  if form.data.description != None else ""%}
+                                    {% include "subtemplates/_form_object_textfield.html" %}
+                                {% endwith %}
+                                {% with form_object=submit_hash, form_object_name="submit_hash", form_object_rows=1, form_object_label="Hash", form_object_value=form.data.submit_hash  if form.data.submit_hash != None else ""%}
+                                    {% include "subtemplates/_form_object_textfield.html" %}
+                                {% endwith %}
+                                <div class="mdl-layout-spacer"></div>
+                                {% with iterable_thing=classification, dropdown_topic="classification", dropdown_label="Classification", form_object_value=form.data.classification %}
+                                    {% include "subtemplates/_dropdown_list.html" %}
+                                {% endwith %}
+                                {% with iterable_thing=groups, dropdown_topic="group_access", dropdown_label="Group Access",form_object_value=form.data.group_access %}
+                                    {% include "subtemplates/_dropdown_object.html" %}
+                                {% endwith %}
+                                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                                        value=data-val.value>
+                                    Create
+                                </button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <div class="mdl-layout-spacer"></div>
+    </main>
+    <div class="mdl-layout-spacer"></div>
+{% endblock %}
