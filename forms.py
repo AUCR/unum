@@ -50,7 +50,7 @@ class EditUploadFile(FlaskForm):
         except:
             self.description = upload["description"]
             self.classification = upload["classification"]
-            self.group_access = upload["group_access"]
+            self.group_access = upload["groups_access"]
 
 
 class SaveUploadFile(FlaskForm):

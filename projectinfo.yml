@@ -8,10 +8,10 @@ info:
   classifiers:
     - 'Development Status :: 4 - Beta'
     - 'Intended Audience :: Developers'
-    - 'Programming Language :: Python :: 3.6'
+    - 'Programming Language :: Python :: 3.7'
 
 version:
   major: 0
   minor: 0
   revision: 1
-  release: 8
+  release: 9

@@ -152,7 +152,7 @@ def edit_upload_file_route():
                     if upload is not None:
                         upload.description = request.form["description"]
                         upload.classification = int(request.form["classification"])
-                        upload.group_access = int(request.form["group_access"])
+                        upload.group_access = int(request.form["groups_access"])
                         db.session.commit()
             return redirect(url_for('unum.unum_plugin_route'))
         if request.method == "GET":
