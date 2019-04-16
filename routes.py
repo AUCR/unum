@@ -55,7 +55,7 @@ def unum_file_download(md5_hash):
 @unum.route('/unum', methods=['GET', 'POST'])
 @login_required
 def unum_plugin_route():
-    """the tasks function returns the plugin framework for the yara_plugin default task view"""
+    """the tasks function returns the plugin framework for the unum default task view"""
     # TODO show current unum in the database
     if request.method == 'POST':
         return redirect("unum/create")
