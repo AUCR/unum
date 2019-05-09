@@ -58,7 +58,7 @@ def unum_plugin_route():
     """the tasks function returns the plugin framework for the unum default task view"""
     # TODO show current unum in the database
     if request.method == 'POST':
-        return redirect("unum/create")
+        return redirect("/unum/create")
     form = Unum(request.form)
     classification_choices = []
     for items in Classification.query.all():
