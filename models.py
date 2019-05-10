@@ -9,7 +9,8 @@ from yaml_info.yamlinfo import YamlInfo
 class UNUM(SearchableMixin, PaginatedAPIMixin, db.Model):
     """Upload File data default table for aucr."""
 
-    __searchable__ = ['id', 'description', 'classification', 'created_by', 'md5_hash', 'file_name']
+    __searchable__ = ['id', 'description', 'classification', 'created_by', 'md5_hash', 'file_name',
+                      'created_time_stamp']
     __tablename__ = 'unum'
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256), index=True)

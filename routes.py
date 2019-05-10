@@ -35,7 +35,7 @@ def unum_search():
     search_uploaded_files, total = \
         UNUM.search(g.unum_search_form.q.data, page, int(current_app.config['POSTS_PER_PAGE']))
     next_url = url_for('unum.unum_search', q=g.unum_search_form.q.data, page=page + 1) \
-        if total > page * int(current_app.config['POSTS_PER_PAGE']) else None
+        if total["value"] > page * int(current_app.config['POSTS_PER_PAGE']) else None
     prev_url = url_for('unum.unum_search', q=g.unum_search_form.q.data, page=page - 1) if page > 1 else None
     return render_template('unum_search.html', title='UNUM Search', page=page, search_url='unum.unum_search',
                            next_url=next_url, prev_url=prev_url, posts=posts, file_results=search_uploaded_files)
