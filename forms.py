@@ -3,10 +3,10 @@
 from flask import request
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, TextAreaField, SelectMultipleField, IntegerField, StringField
-from wtforms.validators import Length
-from aucr_app.plugins.unum.globals import AVAILABLE_CHOICES
-from wtforms.validators import DataRequired
 from flask_babel import lazy_gettext as _l
+from wtforms.validators import Length, DataRequired
+from aucr_app.plugins.auth.auth_globals import AVAILABLE_CHOICES
+from aucr_app.plugins.unum.unum_globals import CLASSIFICATION_AVAILABLE_CHOICES
 
 
 class UNUMSearchForm(FlaskForm):
@@ -16,8 +16,8 @@ class UNUMSearchForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         if 'formdata' not in kwargs:
             kwargs['formdata'] = request.args
-        if 'csrf_enabled' not in kwargs:
-            kwargs['csrf_enabled'] = False
+        if 'meta.csrf' not in kwargs:
+            kwargs['meta.csrf'] = False
         super(UNUMSearchForm, self).__init__(*args, **kwargs)
 
 
@@ -25,7 +25,7 @@ class UploadFile(FlaskForm):
     """Upload New File Form."""
 
     description = TextAreaField(_l('Description'), validators=[Length(min=0, max=256)])
-    classification = SelectMultipleField('Classification', choices=AVAILABLE_CHOICES)
+    classification = SelectMultipleField('Classification', choices=CLASSIFICATION_AVAILABLE_CHOICES)
     group_access = SelectMultipleField(_l('Group Access'), choices=AVAILABLE_CHOICES)
     submit = SubmitField(_l('Create'))
 
@@ -35,7 +35,7 @@ class EditUploadFile(FlaskForm):
 
     upload_id = IntegerField(_l('Upload ID'), validators=[Length(min=0, max=12)])
     description = TextAreaField(_l('Description'), validators=[Length(min=0, max=256)])
-    classification = SelectMultipleField('Classification', choices=AVAILABLE_CHOICES)
+    classification = SelectMultipleField('Classification', choices=CLASSIFICATION_AVAILABLE_CHOICES)
     group_access = SelectMultipleField(_l('Group Access'), choices=AVAILABLE_CHOICES)
     submit = SubmitField(_l('Save'))
 

@@ -42,10 +42,14 @@ def unum_file_download(file_hash):
 @token_auth.login_required
 def unum_file_upload():
     """Return group list API call."""
-    if '/' in request.args['filename']:
+    request_args = request.args
+    file = request.data
+    if len(file) < 1:
+        request_args = request.form
+        file = request.files['filename']
+    if '/' == request_args['filename'][-1:]:
         # Return 400 BAD REQUEST
         abort(400, 'no subdirectories directories allowed')
-    file = request.data
     if file:
         file_hash = get_upload_file_hash(file)
         duplicate_file = UNUM.query.filter_by(md5_hash=file_hash).first()
@@ -53,12 +57,12 @@ def unum_file_upload():
             error_data = {"error": "This file has already been uploaded.", "error_code": 500}
             return jsonify(error_data)
 
-        new_upload = UNUM(description=request.args['description'], created_by=g.current_user.id,
-                          classification=request.args['classification'],
-                          group_access=request.args['group_access'],
+        new_upload = UNUM(description=request_args['description'], created_by=g.current_user.id,
+                          classification=request_args['classification'],
+                          group_access=request_args['group_access'],
                           created_time_stamp=udatetime.utcnow(),
                           modify_time_stamp=udatetime.utcnow(),
-                          md5_hash=file_hash, file_name=str(request.args['filename']))
+                          md5_hash=file_hash, file_name=str(request_args['filename']))
         db.session.add(new_upload)
         db.session.commit()
         return jsonify({"file_id": new_upload.id, "md5": file_hash})

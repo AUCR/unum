@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from aucr_app.plugins.auth.models import Groups, Group
 from aucr_app.plugins.unum.forms import UploadFile, EditUploadFile, Unum, UNUMSearchForm
-from aucr_app.plugins.unum.globals import AVAILABLE_CHOICES
+from aucr_app.plugins.unum.unum_globals import CLASSIFICATION_AVAILABLE_CHOICES
 from aucr_app.plugins.unum.models import UNUM, Classification
 from aucr_app.plugins.analysis.routes import get_upload_file_hash
 from aucr_app.plugins.analysis.file.upload import allowed_file
@@ -28,8 +28,6 @@ def before_request():
 @login_required
 def unum_search():
     """UNUM search plugin flask blueprint."""
-    if not g.unum_search_form.validate():
-        return redirect(url_for('unum.unum_plugin_route'))
     page = request.args.get('page', 1, type=int) or 1
     posts, total = UNUM.search(g.unum_search_form.q.data, page, int(current_app.config['POSTS_PER_PAGE']))
     search_uploaded_files, total = \
@@ -48,8 +46,11 @@ def unum_file_download(md5_hash):
     _id = UNUM.query.filter_by(md5_hash=md5_hash).first()
     group_access_value = Group.query.filter_by(username_id=current_user.id, groups_id=_id.group_access).first()
     if group_access_value:
-        encrypt_zip_file("infected", str(md5_hash + ".zip"), [current_app.config['FILE_FOLDER'] + md5_hash])
-        return send_from_directory("/tmp/", str(md5_hash + ".zip"), as_attachment=True)
+        file_upload_path = current_app.config['FILE_FOLDER']
+        if file_upload_path[:-1] != "/":
+            file_upload_path += "/"
+        encrypt_zip_file("infected", str(md5_hash + ".zip"), [f"{file_upload_path}{md5_hash}"])
+        return send_from_directory(current_app.config['TMP_FILE_FOLDER'], str(md5_hash + ".zip"), as_attachment=True)
 
 
 @unum.route('/unum', methods=['GET', 'POST'])
@@ -95,11 +96,16 @@ def unum_plugin_route():
 def unum_file_route():
     """Create upload default view."""
     group_info = Groups.query.all()
+    classification_choices_list = Classification.query.all()
+    classification_choices = []
+    assigned_classification_value = None
+    for items in Classification.query.all():
+        classification_choices.append((int(items.id), items.classification))
     if request.method == 'POST':
         form = UploadFile(request.form)
-        form.classification.choices = AVAILABLE_CHOICES
         md5_hash = None
         if form.validate_on_submit():
+            form.classification.choices = classification_choices
             try:
                 file = request.files['file']
             except KeyError:
@@ -107,26 +113,34 @@ def unum_file_route():
             if file and allowed_file(file.filename):
                 secure_filename(file.filename)
                 md5_hash = get_upload_file_hash(file)
-            classification_selection = None
-            for items in AVAILABLE_CHOICES:
-                if items[0] == form.classification.data[0]:
-                    classification_selection = items
             duplicate_file = UNUM.query.filter_by(md5_hash=md5_hash).first()
+            classification_choices = classification_choices_list
             if duplicate_file:
                 flash("The upload file has already been uploaded.")
                 return redirect(url_for('unum.unum_plugin_route'))
-            new_upload = UNUM(description=form.description.data, created_by=current_user.id,
-                              classification=classification_selection[0], file_name=str(file.filename),
-                              group_access=form.group_access.data[0], created_time_stamp=udatetime.utcnow(),
+            new_upload = UNUM(description=form.description.data,
+                              created_by=current_user.id,
+                              classification=form.classification.data[0],
+                              file_name=str(file.filename),
+                              group_access=form.group_access.data[0],
+                              created_time_stamp=udatetime.utcnow(),
                               modify_time_stamp=udatetime.utcnow(),
                               md5_hash=md5_hash)
             db.session.add(new_upload)
             db.session.commit()
             flash("The upload file has been created and we started processing it for you.")
             return redirect(url_for('unum.unum_plugin_route'))
+        else:
+            for error in form.errors:
+                flash(str(form.errors[error][0]), 'error')
+            return redirect(url_for('unum.unum_plugin_route'))
     form = UploadFile(request.form)
-    return render_template('unum_upload_file.html', title='Upload New File', form=form, groups=group_info,
-                           classification=AVAILABLE_CHOICES)
+    form.classification.choices = classification_choices
+    return render_template('unum_upload_file.html',
+                           title='Upload New File',
+                           form=form,
+                           groups=group_info,
+                           classification=classification_choices)
 
 
 @unum.route('/edit', methods=['GET', 'POST'])
@@ -136,7 +150,15 @@ def edit_upload_file_route():
     group_info = Groups.query.all()
     submitted_upload_id = request.args.get("id")
     upload = UNUM.query.filter_by(id=submitted_upload_id).first()
-    group_access_value = Group.query.filter_by(username_id=current_user.id, groups_id=upload.group_access).first()
+    test = request.args.get("groups_access")
+    try:
+        group_id = int(request.form["groups_access"])
+    except:
+        try:
+            group_id = int(request.form["groups_access"])
+        except:
+            group_id = upload.group_access
+    group_access_value = Group.query.filter_by(username_id=current_user.id, groups_id=group_id).first()
     if group_access_value:
         group_ids = Group.query.filter_by(username_id=current_user.id).all()
         user_groups = []
@@ -159,6 +181,7 @@ def edit_upload_file_route():
             if upload:
                 form = EditUploadFile(upload)
                 assigned_group_value = None
+                classification_choices_list = Classification.query.all()
                 classification_choices = []
                 assigned_classification_value = None
                 for items in Classification.query.all():
@@ -169,10 +192,16 @@ def edit_upload_file_route():
                 for items in classification_choices:
                     if items[0] == upload.classification:
                         assigned_classification_value = items[1]
-                table_dict = {"id": upload.id, "description": upload.description, "md5": upload.md5_hash,
-                              "classification": assigned_classification_value, "group_access": assigned_group_value}
-                return render_template('edit_upload_file.html', title='Edit Upload File', form=form, groups=group_info,
-                                       classification=AVAILABLE_CHOICES, table_dict=table_dict,
+                table_dict = {"id": upload.id,
+                              "description": upload.description,
+                              "md5": upload.md5_hash,
+                              "classification": assigned_classification_value,
+                              "group_access": assigned_group_value}
+                return render_template('edit_upload_file.html',
+                                       title='Edit Upload File',
+                                       form=form, groups=group_info,
+                                       classification=classification_choices,
+                                       table_dict=table_dict,
                                        groups_access=group_choices)
             else:
                 return unum_plugin_route()

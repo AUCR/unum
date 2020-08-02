@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+
 
 {% block app_content %}
     <style>
@@ -28,14 +28,15 @@
                         </div>
                         <div class="mdl-card__actions mdl-card--border ">
                             <form class="form" method="post" role="form" enctype="multipart/form-data">
-                                {{ form.hidden_tag() }}
+                               {{ form.hidden_tag() }}
+
                                 {% with form_object=description, form_object_name="description", form_object_rows=1, form_object_label="Description", form_object_value=form.data.description  if form.data.description != None else ""%}
                                     {% include "subtemplates/_form_object_textfield.html" %}
                                 {% endwith %}
                                 <div class="mdl-layout-spacer"></div>
                                 {% include "upload_file.html" %}
                                 <div class="mdl-layout-spacer"></div>
-                                {% with iterable_thing=classification, dropdown_topic="classification", dropdown_label="Classification", form_object_value=form.data.classification %}
+                                {% with iterable_thing=classification, dropdown_topic="classification", dropdown_label="Classification", form_object_value=form.data.classification, dropdown_topic_set="True" %}
                                     {% include "subtemplates/_dropdown_list.html" %}
                                 {% endwith %}
                                 {% with iterable_thing=groups, dropdown_topic="group_access", dropdown_label="Group Access", form_object_value=form.data.group_access  %}
@@ -60,7 +61,8 @@
                         </div>
                         <div class="mdl-card__actions mdl-card--border ">
                             <form class="form" method="post" role="form" enctype="multipart/form-data">
-                                {{ form.hidden_tag() }}
+                               {{ form.hidden_tag() }}
+
                                 {% with form_object=description, form_object_name="description", form_object_rows=1, form_object_label="Description", form_object_value=form.data.description  if form.data.description != None else ""%}
                                     {% include "subtemplates/_form_object_textfield.html" %}
                                 {% endwith %}
@@ -93,7 +95,8 @@
                         </div>
                         <div class="mdl-card__actions mdl-card--border ">
                             <form class="form" method="post" role="form" enctype="multipart/form-data">
-                                {{ form.hidden_tag() }}
+                               {{ form.hidden_tag() }}
+
                                 {% with form_object=description, form_object_name="description", form_object_rows=1, form_object_label="Description", form_object_value=form.data.description  if form.data.description != None else ""%}
                                     {% include "subtemplates/_form_object_textfield.html" %}
                                 {% endwith %}

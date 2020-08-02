@@ -5,7 +5,7 @@ from aucr_app.plugins.unum.api.file import api_page as unum_api_page
 
 
 def load(app):
-    """load overrides for Unum plugin to work properly"""
+    """Load overrides for Unum plugin to work properly."""
     app.register_blueprint(unum, url_prefix='/unum')
     app.register_blueprint(unum_api_page, url_prefix='/api')
 
