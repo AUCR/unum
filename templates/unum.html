@@ -20,6 +20,7 @@
                 {% with form_object="table",
                     checkbox_enabled="True",
                     table_list=[],
+                    table_data=table_dict,
                     table_header=["Upload File ID", "Description", "MD5", "File_Name", "Classification"],
                     url_for_value='unum.edit_upload_file_route'  %}
                 {% include "subtemplates/_table_object.html" %}
