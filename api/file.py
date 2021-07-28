@@ -4,8 +4,8 @@ import udatetime
 from flask import jsonify, g, current_app, send_from_directory, abort, request
 from aucr_app import db
 from aucr_app.plugins.unum.models import UNUM
-from aucr_app.plugins.api.auth import token_auth
-from aucr_app.plugins.api.routes import api_page
+from aucr_app.plugins.apiv2.auth import token_auth
+from aucr_app.plugins.apiv2.routes import api_page
 from aucr_app.plugins.auth.models import Group
 from aucr_app.plugins.analysis.routes import get_upload_file_hash
 
